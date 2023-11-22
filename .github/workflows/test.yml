@@ -1,0 +1,35 @@
+name: Test
+on:
+
+  workflow_dispatch:
+  pull_request:
+    branches: 
+    - main
+    # - staging
+    
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    strategy:
+      matrix:
+        node-version: ['18.x']
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup node version ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Unit Test
+        run: yarn test
+        env:
+          CI: true
+
